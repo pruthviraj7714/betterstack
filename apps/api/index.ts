@@ -18,6 +18,7 @@ app.post('/website', async (req, res) => {
         const newWebsite = await prisma.website.create({
             data : {
                 url : req.body.url,
+                userId : "tewst"
             }
         }) ;
 
