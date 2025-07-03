@@ -1,50 +1,15 @@
 import express from "express";
 import { prisma } from "@repo/store";
+import userRouter from "./routes/user.routes";
+import websiteRouter from "./routes/website.routes";
 const app = express();
 
 app.use(express.json());
 
-app.post('/website', async (req, res) => {
-    const url = req.body.url;
-
-    if(!url) {
-        res.status(400).json({
-            message : "url is missing"
-        })
-        return;
-    }
-
-    try {
-        const newWebsite = await prisma.website.create({
-            data : {
-                url : req.body.url,
-                userId : "tewst"
-            }
-        }) ;
-
-        res.status(201).json({
-            message : "Website successfully added to db",
-            website : newWebsite
-        });
-    } catch (error) {
-        res.status(500).json({
-            message : "Internal Server Error",
-            error : error
-        });
-    }
-})
-
-app.get('/status/:websiteId', (req, res) => {
-    try {
-        
-    } catch (error) {
-        res.status(500).json({
-            message : "Internal Server Error",
-            error : error
-        });
-    }
-})
+app.use('/user', userRouter);
+app.use('/website', websiteRouter);
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Server is running on PORT 3000");
 })
+
