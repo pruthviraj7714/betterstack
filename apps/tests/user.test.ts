@@ -3,14 +3,6 @@ import { BASE_URL } from "./config";
 import request from "supertest";
 import { prisma } from "@repo/store"
 
-beforeAll(async () => {
-    await prisma.user.deleteMany(); 
-  });
-  
-afterAll(async () => {
-    await prisma.$disconnect(); 
-});
-
 
 describe("user signup", () => {
     it("should fail if username is not passed", async () => {

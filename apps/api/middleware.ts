@@ -27,14 +27,14 @@ export const userMiddleware = (
   try {
     const isVerified = verify(token, process.env.JWT_SECRET ?? "") as JwtPayload;
 
-    if (!isVerified || !isVerified.userId) {
+    if (!isVerified || !isVerified.sub) {
        res.status(403).json({
         message: "Unauthorized User",
       });
       return;
     }
 
-    req.userId = isVerified.userId;
+    req.userId = isVerified.sub;
     next();
   } catch (error) {
      res.status(403).json({
