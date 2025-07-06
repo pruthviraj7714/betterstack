@@ -1,18 +1,13 @@
 import { createClient } from "redis";
+import { type IRegion, type IPushWebsite } from "../types";
 
-interface WebsiteAddSchema {
-  websiteId: string;
-  url: string;
-}
-
-const client = createClient()
-  .on("error", (err) => console.log("Error: ", err));
+const client = createClient().on("error", (err) => console.log("Error: ", err));
 
 await client.connect();
 
-const STREAM_NAME = "betteruptime:website"
+const STREAM_NAME = "betteruptime:website";
 
-export async function xAddBulk(websites: WebsiteAddSchema[]) {
+export async function xAddBulk(websites: IPushWebsite[]) {
   const multi = client.multi();
 
   websites.forEach((website) => {
@@ -20,15 +15,34 @@ export async function xAddBulk(websites: WebsiteAddSchema[]) {
       id: website.websiteId,
       url: website.url,
     });
+    console.log("pushed: " + website.url);
   });
 
   await multi.exec();
 }
 
-export async function xReadGroup(consumerGroup : string, workerId : string) {
-  await client.xReadGroup(consumerGroup, workerId, {
-    key : STREAM_NAME,
-    id : ">",
-  })
+export async function xAckBulk(
+  events: { groupName: string; eventId: string }[]
+) {
+  await Promise.all(
+    events.map((event) =>
+      client.xAck(STREAM_NAME, event.groupName, event.eventId)
+    )
+  );
 }
 
+export async function xCreateGroupBulk(regions: IRegion[]) {
+  await Promise.all(
+    regions.map((r: IRegion) =>
+      client.xGroupCreate(STREAM_NAME, r.id, "$").catch((err) => {
+        if (err?.message?.includes("BUSYGROUP")) {
+          console.log(`Group "${r.id}" already exists.`);
+        } else {
+          console.error(`Failed to create group "${r.id}":`, err);
+        }
+      })
+    )
+  );
+}
+
+export default client;
