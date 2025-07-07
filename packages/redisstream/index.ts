@@ -34,15 +34,22 @@ export async function xAckBulk(
 export async function xCreateGroupBulk(regions: IRegion[]) {
   await Promise.all(
     regions.map((r: IRegion) =>
-      client.xGroupCreate(STREAM_NAME, r.id, "$").catch((err) => {
+      client.xGroupCreate(STREAM_NAME, r.id, "$", {
+        MKSTREAM : true
+      }).catch((err) => {
         if (err?.message?.includes("BUSYGROUP")) {
           console.log(`Group "${r.id}" already exists.`);
         } else {
-          console.error(`Failed to create group "${r.id}":`, err);
+          console.error(`Failed to create group "${r.id}"`);
         }
       })
     )
   );
+}
+
+export async function xGroupInfo() {
+    const response = await client.xInfoGroups(STREAM_NAME);
+    return response;
 }
 
 export default client;

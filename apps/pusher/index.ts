@@ -1,10 +1,29 @@
 import { prisma } from "@repo/store";
-import { xAddBulk, xCreateGroupBulk } from "../../packages/redisstream";
+import {
+  xAddBulk,
+  xCreateGroupBulk,
+  xGroupInfo,
+} from "../../packages/redisstream";
 
 async function createGroups() {
   try {
-    const regions = await prisma.region.findMany({});
-    await xCreateGroupBulk(regions);
+    const [regions, redisGroups] = await Promise.all([
+      prisma.region.findMany(),
+      xGroupInfo(),
+    ]);
+
+    const existingGroupNames = new Set<string>(redisGroups.map((g) => g.name));
+
+    const newRegions = regions.filter((r) => !existingGroupNames.has(r.id));
+
+    if (newRegions.length > 0) {
+      await xCreateGroupBulk(newRegions);
+      newRegions.forEach((r) => {
+        console.log(`Created Redis group for region: ${r.name}`);
+      });
+    } else {
+      console.log("No new regions found to create groups for.");
+    }
   } catch (error: any) {
     console.log("internal server error: ", error);
   }
@@ -19,7 +38,7 @@ async function pushWebsites() {
         id: true,
       },
     });
-    console.log("found ", websites.length, " websites");
+    console.log(`Found ${websites.length} websites to push to queue`);
   } catch (error: any) {
     console.log("Error while fetching websites", error);
     return;
@@ -42,13 +61,8 @@ async function pushWebsites() {
 async function main() {
   await createGroups();
   await pushWebsites();
-
-  setInterval(
-    async () => {
-      await pushWebsites();
-    },
-    3 * 60 * 1000
-  );
+  setInterval(createGroups, 60 * 1000);
+  setInterval(pushWebsites, 3 * 60 * 1000);
 }
 
 main();
