@@ -90,9 +90,57 @@ websiteRouter.delete(
   }
 );
 
-websiteRouter.get("/status/:websiteId", (req, res) => {
+websiteRouter.get("/status/:websiteId", userMiddleware, async (req, res) => {
   try {
-    //TODO
+    const websiteId = req.params.websiteId;
+
+    const website = await prisma.website.findFirst({
+      where: {
+        id: websiteId,
+      },
+      include: {
+        tickes: {
+          take: 10,
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+        regions : {
+          select : {
+            name : true
+          }
+        }
+      },
+    });
+
+    res.status(200).json({
+      website,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error,
+    });
+  }
+});
+
+websiteRouter.get("/websites", userMiddleware, async (req, res) => {
+  try {
+    const websites = await prisma.website.findMany({
+      where: {
+        userId: req.userId,
+      },
+      include: {
+        tickes: {
+          take: 1,
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+      },
+    });
+
+    res.status(200).json(websites);
   } catch (error) {
     res.status(500).json({
       message: "Internal Server Error",

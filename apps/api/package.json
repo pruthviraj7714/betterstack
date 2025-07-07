@@ -3,6 +3,11 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "dev": "bun --watch run index.ts",
+    "build": "bun build index.ts --outdir dist",
+    "start": "bun run dist/index.js"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@repo/typescript-config": "*",
@@ -12,8 +17,10 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.9",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "zod": "^3.25.71"

@@ -1,10 +1,12 @@
 import express from "express";
-import { prisma } from "@repo/store";
 import userRouter from "./routes/user.routes";
 import websiteRouter from "./routes/website.routes";
+import cors from "cors";
+
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 app.use('/user', userRouter);
 app.use('/website', websiteRouter);
