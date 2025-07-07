@@ -25,10 +25,10 @@ model Website {
   id        String        @id @default(uuid())
   url       String
   userId    String
-  user      User          @relation(fields: [userId], references: [id])
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   regions   Region[]
   createdAt DateTime      @default(now())
-  tickes    WebsiteTick[]
+  tickes    WebsiteTick[]    
 }
 
 model Region {
@@ -45,8 +45,8 @@ model WebsiteTick {
   regionId        String
   websiteId       String
   createdAt       DateTime @default(now())
-  region          Region   @relation(fields: [regionId], references: [id])
-  website         Website  @relation(fields: [websiteId], references: [id])
+  region          Region   @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  website         Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
 }
 
 enum STATUS {
