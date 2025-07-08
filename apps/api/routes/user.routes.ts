@@ -41,7 +41,7 @@ userRouter.post(
       });
 
       res.status(201).json({
-        message: "User created successfully",
+        message: "You’ve signed up successfully!",
         id: user.id,
       });
       return;
