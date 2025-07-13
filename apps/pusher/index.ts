@@ -12,15 +12,17 @@ async function createGroups() {
       xGroupInfo(),
     ]);
 
-    const existingGroupNames = new Set<string>(redisGroups.map((g) => g.name));
-
-    const newRegions = regions.filter((r) => !existingGroupNames.has(r.id));
-
-    if (newRegions.length > 0) {
-      await xCreateGroupBulk(newRegions);
-      newRegions.forEach((r) => {
-        console.log(`Created Redis group for region: ${r.name}`);
-      });
+      const existingGroupNames = new Set<string>(
+        (redisGroups || []).map((g) => g.name)
+      );;
+  
+      const newRegions = regions.filter((r) => !existingGroupNames.has(r.id));
+  
+      if (newRegions.length > 0) {
+        await xCreateGroupBulk(newRegions);
+        newRegions.forEach((r) => {
+          console.log(`Created Redis group for region: ${r.name}`);
+        });
     } else {
       console.log("No new regions found to create groups for.");
     }

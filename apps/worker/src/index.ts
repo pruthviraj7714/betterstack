@@ -7,21 +7,23 @@ async function pollRegions() {
   try {
     const groups = await xGroupInfo();
 
-    for (const group of groups) {
-      if (!startedGroups.has(group.name)) {
-        const consumerGroup = group.name;
-        const totalWorkers = Number(process.env.WORKER_NUMBER) || 2;
-
-        console.log(
-          `[+] Starting ${totalWorkers} workers for new region: ${group.name}`
-        );
-
-        for (let i = 0; i < totalWorkers; i++) {
-          const workerId = `${group.name}-worker:${i}`;
-          startWorker(consumerGroup, workerId);
+    if(groups) {
+      for (const group of groups) {
+        if (!startedGroups.has(group.name)) {
+          const consumerGroup = group.name;
+          const totalWorkers = Number(process.env.WORKER_NUMBER) || 2;
+  
+          console.log(
+            `[+] Starting ${totalWorkers} workers for new region: ${group.name}`
+          );
+  
+          for (let i = 0; i < totalWorkers; i++) {
+            const workerId = `${group.name}-worker:${i}`;
+            startWorker(consumerGroup, workerId);
+          }
+  
+          startedGroups.add(group.name);
         }
-
-        startedGroups.add(group.name);
       }
     }
   } catch (error: any) {

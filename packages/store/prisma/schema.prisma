@@ -28,14 +28,14 @@ model Website {
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   regions   Region[]
   createdAt DateTime      @default(now())
-  tickes    WebsiteTick[]    
+  ticks    WebsiteTick[]    
 }
 
 model Region {
   id       String        @id @default(uuid())
   name     String
   websites Website[]
-  tickes   WebsiteTick[]
+  ticks   WebsiteTick[]
 }
 
 model WebsiteTick {

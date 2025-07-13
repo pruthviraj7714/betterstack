@@ -147,7 +147,6 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      {/* Right Side - Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <Card className="w-full max-w-md bg-gray-800 border-gray-700">
           <CardHeader className="space-y-1">

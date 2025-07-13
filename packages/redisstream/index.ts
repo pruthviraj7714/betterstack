@@ -32,7 +32,7 @@ export async function xAckBulk(
 }
 
 export async function xCreateGroupBulk(regions: IRegion[]) {
-  await Promise.all(
+  const results = await Promise.all(
     regions.map((r: IRegion) =>
       client.xGroupCreate(STREAM_NAME, r.id, "$", {
         MKSTREAM : true
@@ -45,11 +45,17 @@ export async function xCreateGroupBulk(regions: IRegion[]) {
       })
     )
   );
+
+  return results;
 }
 
 export async function xGroupInfo() {
+  try {
     const response = await client.xInfoGroups(STREAM_NAME);
     return response;
+  } catch (error) {
+    console.log("error while fetching group info ", error);
+  }
 }
 
 export default client;

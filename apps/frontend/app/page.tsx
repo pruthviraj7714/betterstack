@@ -16,6 +16,7 @@ import {
   Zap,
   BarChart3,
   Bell,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -23,9 +24,16 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
       <header className="px-4 lg:px-6 h-14 flex items-center border-b border-gray-800 bg-gray-900">
-        <Link className="flex items-center justify-center" href="#">
-          <Shield className="h-6 w-6 text-primary" />
-          <span className="ml-2 text-lg font-bold">BetterStack</span>
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-bold text-lg text-primary hover:opacity-80 transition"
+        >
+          <div className="p-1.5 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-md">
+            <Activity className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-2xl text-white font-extrabold tracking-tight">
+            BetterStack
+          </span>
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <Link

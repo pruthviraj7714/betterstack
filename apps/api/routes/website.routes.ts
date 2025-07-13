@@ -12,7 +12,7 @@ websiteRouter.post(
 
     if (!url) {
       res.status(400).json({
-        message: "url is missing",
+        message: "Url is missing!",
       });
       return;
     }
@@ -99,17 +99,15 @@ websiteRouter.get("/status/:websiteId", userMiddleware, async (req, res) => {
         id: websiteId,
       },
       include: {
-        tickes: {
+        ticks: {
           take: 10,
           orderBy: {
             createdAt: "desc",
           },
-        },
-        regions : {
-          select : {
-            name : true
+          include : {
+            region : true
           }
-        }
+        },
       },
     });
 
@@ -131,7 +129,7 @@ websiteRouter.get("/websites", userMiddleware, async (req, res) => {
         userId: req.userId,
       },
       include: {
-        tickes: {
+        ticks: {
           take: 1,
           orderBy: {
             createdAt: "desc",

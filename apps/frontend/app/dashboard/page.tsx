@@ -52,6 +52,7 @@ import {
   AlertTriangle,
   RefreshCcw,
   Zap,
+  Activity,
 } from "lucide-react";
 import Link from "next/link";
 import { BACKEND_URL } from "@/lib/config";
@@ -70,7 +71,7 @@ interface ITicks {
 interface IWebsite {
   id: string;
   url: string;
-  tickes: ITicks[];
+  ticks: ITicks[];
 }
 
 export default function DashboardPage() {
@@ -91,7 +92,6 @@ export default function DashboardPage() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log(res.data);
       setWebsites(res.data);
     } catch (error: any) {
       alert(error.response.data.message);
@@ -218,20 +218,22 @@ export default function DashboardPage() {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center group cursor-pointer">
-                <div className="relative">
-                  <Shield className="h-8 w-8 text-blue-400 group-hover:text-blue-300 transition-colors" />
-                  <div className="absolute inset-0 bg-blue-400/20 rounded-full blur-lg group-hover:bg-blue-300/30 transition-colors"></div>
-                </div>
-                <span className="ml-3 text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  StatusGuard
-                </span>
-              </Link>
+            <Link
+          href="/dashboard"
+          className="flex items-center gap-2 font-bold text-lg text-primary hover:opacity-80 transition"
+        >
+          <div className="p-1.5 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-md">
+            <Activity className="w-5 h-5 text-white" />
+          </div>
+          <span className="text-2xl text-white font-extrabold tracking-tight">
+            BetterStack
+          </span>
+        </Link>
             </div>
             <div className="flex items-center space-x-4">
               <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r cursor-pointer from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
+                  <Button className="bg-gradient-to-r bg-gray-900 cursor-pointer text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200">
                     <Plus className="w-4 h-4 mr-2" />
                     Add Website
                   </Button>
@@ -270,14 +272,14 @@ export default function DashboardPage() {
                         <Button
                           type="button"
                           variant="outline"
-                          className="border-slate-600 text-slate-300 hover:bg-slate-700 bg-transparent"
+                          className="bg-red-500 hover:bg-red-600 cursor-pointer hover:text-white"
                         >
                           Cancel
                         </Button>
                       </DialogClose>
                       <Button
                         type="submit"
-                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                        className="bg-gray-900 hover:bg-gray-950 cursor-pointer"
                       >
                         Add Website
                       </Button>
@@ -347,8 +349,8 @@ export default function DashboardPage() {
                 <div className="text-3xl font-bold text-emerald-400">
                   {websites &&
                     websites.length > 0 &&
-                    websites?.filter((w) => w.tickes[0]?.status === "UP")
-                      .length}
+                    websites?.filter((w) => w.ticks[0]?.status === "UP")
+                      .length || 0}
                 </div>
                 <p className="text-xs text-slate-400 flex items-center mt-1">
                   <CheckCircle className="w-3 h-3 mr-1" />
@@ -371,8 +373,8 @@ export default function DashboardPage() {
                 <div className="text-3xl font-bold text-red-400">
                   {websites &&
                     websites.length > 0 &&
-                    websites?.filter((w) => w.tickes[0]?.status === "DOWN")
-                      .length}
+                    websites?.filter((w) => w.ticks[0]?.status === "DOWN")
+                      .length || 0}
                 </div>
                 <p className="text-xs text-slate-400 flex items-center mt-1">
                   <AlertTriangle className="w-3 h-3 mr-1" />
@@ -455,29 +457,29 @@ export default function DashboardPage() {
                         </TableCell>
                         <TableCell>
                           {getStatusBadge(
-                            website.tickes.length > 0
-                              ? website.tickes[0]?.status
+                            website.ticks.length > 0
+                              ? website.ticks[0]?.status
                               : "Checking"
                           )}
                         </TableCell>
                         <TableCell>
                           <span
                             className={`font-mono ${getResponseTimeColor(
-                              website.tickes[0]?.reponseTimeMs,
-                              website.tickes[0]?.status
+                              website.ticks[0]?.reponseTimeMs,
+                              website.ticks[0]?.status
                             )}`}
                           >
-                            {website.tickes.length === 0
+                            {website.ticks.length === 0
                               ? "—"
-                              : website.tickes[0]?.status === "DOWN"
+                              : website.ticks[0]?.status === "DOWN"
                                 ? "—"
-                                : `${website.tickes[0]?.reponseTimeMs}ms`}
+                                : `${website.ticks[0]?.reponseTimeMs}ms`}
                           </span>
                         </TableCell>
                         <TableCell className="text-slate-400 font-mono">
-                          {website.tickes.length > 0
+                          {website.ticks.length > 0
                             ? new Date(
-                                website?.tickes[0]?.createdAt
+                                website?.ticks[0]?.createdAt
                               ).toLocaleString("en-US", {
                                 dateStyle: "medium",
                                 timeStyle: "short",

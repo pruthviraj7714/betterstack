@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BetterUptime — Distributed Uptime Monitoring",
+  title: "Betterstack — Distributed Uptime Monitoring",
   description: "Track and visualize website uptime across multiple regions using Redis streams and real-time workers.",
 };
 

@@ -53,68 +53,35 @@ interface IWebsite {
 }
 
 const REGION_NAMES: { [key: string]: string } = {
-  "us-east-1": "US East (Virginia)",
-  "us-west-2": "US West (Oregon)",
-  "eu-west-1": "Europe (Ireland)",
-  "ap-southeast-1": "Asia Pacific (Singapore)",
-  "ap-northeast-1": "Asia Pacific (Tokyo)",
+  "fde53372-5ed1-4224-8674-39caadf3efa9": "India",
+  "8d76c6e8-5069-4c06-abb8-812b5a9c317d": "USA",
 }
 
 export default function MultiRegionWebsiteDetailsPage() {
   const { websiteId } = useParams()
-  const [website, setWebsite] = useState<IWebsite | null>(null)
+  const [website, setWebsite] = useState<IWebsite | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string>("all")
   const [loading, setLoading] = useState(true)
 
   const fetchWebsiteInfo = async () => {
+    setLoading(true);
     try {
-      setLoading(true)
-  
-      // 🔹 Dummy response structure
-      const dummyData = {
-        website: {
-          id: "dummy-website-id",
-          url: "https://example.com",
-        },
-        ticks: [
-          {
-            regionId: "us-east",
-            reponseTimeMs: 120,
-            status: "UP",
-            createdAt: new Date().toISOString(),
-          },
-          {
-            regionId: "us-east",
-            reponseTimeMs: 140,
-            status: "DOWN",
-            createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-          },
-          {
-            regionId: "eu-west",
-            reponseTimeMs: 110,
-            status: "UP",
-            createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-          },
-          {
-            regionId: "eu-west",
-            reponseTimeMs: 100,
-            status: "UP",
-            createdAt: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
-          },
-        ],
-      }
-  
-      const processedData = processRegionalData(dummyData)
+      const res = await axios.get(`${BACKEND_URL}/website/status/${websiteId}`, {
+        headers : {
+          Authorization : `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      const processedData = processRegionalData(res.data.website);
       setWebsite(processedData)
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to fetch data")
+      alert(error.response?.data?.message || "Failed to fetch data");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
   
   const processRegionalData = (data: any): IWebsite => {
-    // Group ticks by region
     const regionMap = new Map<string, ITick[]>()
 
     data.ticks?.forEach((tick: ITick) => {
@@ -132,7 +99,7 @@ export default function MultiRegionWebsiteDetailsPage() {
 
       return {
         regionId,
-        regionName: REGION_NAMES[regionId] || regionId,
+        regionName: REGION_NAMES[regionId] || regionId ,
         ticks: ticks.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
         uptime,
         avgResponseTime,
@@ -149,8 +116,8 @@ export default function MultiRegionWebsiteDetailsPage() {
     const globalUptime = totalTicks > 0 ? (totalUpTicks / totalTicks) * 100 : 0
 
     return {
-      id: data.website.id,
-      url: data.website.url,
+      id: data.id,
+      url: data.url,
       regions,
       globalUptime,
       totalChecks: totalTicks,
@@ -201,10 +168,15 @@ export default function MultiRegionWebsiteDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/80">
+        <div className="relative flex flex-col items-center justify-center space-y-4">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-white text-sm font-medium animate-pulse">
+            Loading, please wait...
+          </p>
+        </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -242,7 +214,6 @@ export default function MultiRegionWebsiteDetailsPage() {
 
       <main className="relative px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto">
-          {/* Global Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50 hover:bg-slate-800/70 transition-all duration-200 group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -303,7 +274,6 @@ export default function MultiRegionWebsiteDetailsPage() {
             </Card>
           </div>
 
-          {/* Regional Overview Grid */}
           <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50 mb-8">
             <CardHeader>
               <CardTitle className="text-xl text-white flex items-center">
@@ -361,21 +331,19 @@ export default function MultiRegionWebsiteDetailsPage() {
             </CardContent>
           </Card>
 
-          {/* Detailed Regional Data */}
           <Tabs value={selectedRegion} onValueChange={setSelectedRegion} className="space-y-6">
             <TabsList className="bg-slate-800/50 border-slate-700/50">
-              <TabsTrigger value="all" className="data-[state=active]:bg-slate-700">
+              <TabsTrigger value="all" className="data-[state=active]:bg-slate-700 text-white">
                 All Regions
               </TabsTrigger>
               {website?.regions.map((region) => (
-                <TabsTrigger key={region.regionId} value={region.regionId} className="data-[state=active]:bg-slate-700">
+                <TabsTrigger key={region.regionId} value={region.regionId} className="data-[state=active]:bg-slate-700 text-white">
                   {region.regionName}
                 </TabsTrigger>
               ))}
             </TabsList>
 
             <TabsContent value="all" className="space-y-6">
-              {/* Combined Timeline for All Regions */}
               <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
                 <CardHeader>
                   <CardTitle className="text-xl text-white flex items-center">
@@ -439,7 +407,6 @@ export default function MultiRegionWebsiteDetailsPage() {
               </Card>
             </TabsContent>
 
-            {/* Individual Region Tabs */}
             {website?.regions.map((region) => (
               <TabsContent key={region.regionId} value={region.regionId} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -491,7 +458,6 @@ export default function MultiRegionWebsiteDetailsPage() {
                   </Card>
                 </div>
 
-                {/* Regional Timeline */}
                 <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700/50">
                   <CardHeader>
                     <CardTitle className="text-xl text-white flex items-center">
