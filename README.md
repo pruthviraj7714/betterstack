@@ -1,84 +1,63 @@
-# Turborepo starter
+# 🧠 BetterStack — Website Uptime Monitoring Platform
 
-This Turborepo starter is maintained by the Turborepo core team.
+BetterStack is a modern, full-stack **website uptime monitoring platform** designed with scalability and real-time observability in mind. It features:
 
-## Using this example
+- 🔄 Real-time backend using **Redis Streams**
+- 🌍 Distributed, region-based monitoring with **auto-scaling workers**
+- 🖥️ A sleek dashboard built with **Next.js + Tailwind CSS**
+- ⚙️ Background workers that track uptime and response times
+- 📡 Periodic queueing of websites via a **pusher service**
 
-Run the following command:
+All wrapped in a **modular monorepo** powered by **Turborepo**.
 
-```sh
-npx create-turbo@latest
-```
+---
 
-## What's inside?
+## 🧱 Architecture
 
-This Turborepo includes the following packages/apps:
+> 📌 The system is built with clear separation of concerns:
+> - **Frontend**: Dashboard and monitoring views
+> - **Backend**: API layer for websites/regions
+> - **Pusher**: Periodically adds websites to Redis queue
+> - **Worker**: Distributed consumers processing uptime checks
 
-### Apps and Packages
+![Architecture Diagram](./images/architecture.png)
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+---
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## 🛠 Tech Stack
 
-### Utilities
+| Layer        | Tech                            |
+|--------------|----------------------------------|
+| Monorepo     | [Turborepo](https://turbo.build/repo) |
+| Frontend     | [Next.js](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/) |
+| Backend      | [Express.js](https://expressjs.com/) |
+| Queue        | [Redis Streams](https://redis.io/docs/latest/develop/data-types/streams/) |
+| Database     | [PostgreSQL](https://www.postgresql.org/) via [Prisma ORM](https://www.prisma.io/) |
+| Worker       | Node.js — for distributed region-based website checks |
+| Pusher       | Node.js — queues websites every 3 minutes |
 
-This Turborepo has some additional tools already setup for you:
+---
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## 🌐 Live Demo
 
-### Build
+🔗 [Watch BetterStack in Action (YouTube)](https://youtu.be/JWTCZyGvBXk?si=iMx9BN-GK4S1mFKZ)
 
-To build all apps and packages, run the following command:
+### 🖥 UI Screenshots
 
-```
-cd my-turborepo
-pnpm build
-```
+**Dashboard**
+![Dashboard Page](./images/dashboard.png)
 
-### Develop
+**Monitoring View**
+![Monitor Page](./images/monitor-page.png)
 
-To develop all apps and packages, run the following command:
+---
 
-```
-cd my-turborepo
-pnpm dev
-```
+## 📦 Features
 
-### Remote Caching
+- ✅ Add regions and websites dynamically
+- 🔄 Automatically create consumer groups for new regions
+- 🚀 Launch new workers per region using Redis `XGROUP`
+- ⏱ Real-time monitoring with response time metrics
+- 📊 Scalable architecture with separate services for pushing, processing, and viewing data
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+---
